@@ -1,0 +1,52 @@
+{{- if .Values.pgadmin.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: almadesk-pgadmin
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: almadesk-pgadmin
+    {{- include "almadesk.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: almadesk-pgadmin
+  template:
+    metadata:
+      labels:
+        app: almadesk-pgadmin
+    spec:
+      containers:
+        - name: pgadmin
+          image: "{{ .Values.pgadmin.image.repository }}:{{ .Values.pgadmin.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.pgadmin.port }}
+          env:
+            - name: PGADMIN_DEFAULT_EMAIL
+              value: {{ .Values.pgadmin.auth.email | quote }}
+            - name: PGADMIN_DEFAULT_PASSWORD
+              value: {{ .Values.pgadmin.auth.password | quote }}
+            - name: PGADMIN_CONFIG_SERVER_MODE
+              value: "False"
+            - name: PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED
+              value: "False"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: almadesk-pgadmin
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: almadesk-pgadmin
+    {{- include "almadesk.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.pgadmin.port }}
+      targetPort: {{ .Values.pgadmin.port }}
+      protocol: TCP
+      name: http
+  selector:
+    app: almadesk-pgadmin
+{{- end }}

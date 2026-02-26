@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: almadesk-backend
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: almadesk-backend
+    {{- include "almadesk.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.backend.replicaCount }}
+  selector:
+    matchLabels:
+      app: almadesk-backend
+  template:
+    metadata:
+      labels:
+        app: almadesk-backend
+    spec:
+      containers:
+        - name: backend
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.backend.port }}
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: almadesk-backend-env
+          resources:
+            {{- toYaml .Values.backend.resources | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: {{ .Values.backend.port }}
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: {{ .Values.backend.port }}
+            initialDelaySeconds: 30
+            periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: almadesk-backend
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: almadesk-backend
+    {{- include "almadesk.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.backend.port }}
+      targetPort: {{ .Values.backend.port }}
+      protocol: TCP
+      name: http
+  selector:
+    app: almadesk-backend
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: almadesk-backend-env
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: almadesk-backend
+    {{- include "almadesk.labels" . | nindent 4 }}
+type: Opaque
+stringData:
+  {{- range $key, $value := .Values.backend.env }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}

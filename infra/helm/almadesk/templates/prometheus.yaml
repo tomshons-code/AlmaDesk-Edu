@@ -1,0 +1,107 @@
+{{- if .Values.prometheus.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: almadesk-prometheus
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: almadesk-prometheus
+    {{- include "almadesk.labels" . | nindent 4 }}
+spec:
+  serviceName: almadesk-prometheus
+  replicas: 1
+  selector:
+    matchLabels:
+      app: almadesk-prometheus
+  template:
+    metadata:
+      labels:
+        app: almadesk-prometheus
+    spec:
+      containers:
+        - name: prometheus
+          image: "{{ .Values.prometheus.image.repository }}:{{ .Values.prometheus.image.tag }}"
+          args:
+            - "--config.file=/etc/prometheus/prometheus.yml"
+            - "--storage.tsdb.path=/prometheus"
+            - "--storage.tsdb.retention.time={{ .Values.prometheus.retention }}"
+          ports:
+            - containerPort: {{ .Values.prometheus.port }}
+          volumeMounts:
+            - name: prometheus-data
+              mountPath: /prometheus
+            - name: prometheus-config
+              mountPath: /etc/prometheus
+          readinessProbe:
+            httpGet:
+              path: /-/healthy
+              port: {{ .Values.prometheus.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: prometheus-config
+          configMap:
+            name: almadesk-prometheus-config
+  volumeClaimTemplates:
+    - metadata:
+        name: prometheus-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        {{- if .Values.prometheus.storage.storageClass }}
+        storageClassName: {{ .Values.prometheus.storage.storageClass | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.prometheus.storage.size }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: almadesk-prometheus
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: almadesk-prometheus
+    {{- include "almadesk.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.prometheus.port }}
+      targetPort: {{ .Values.prometheus.port }}
+      protocol: TCP
+      name: http
+  selector:
+    app: almadesk-prometheus
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: almadesk-prometheus-config
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: almadesk-prometheus
+    {{- include "almadesk.labels" . | nindent 4 }}
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+      evaluation_interval: 15s
+      external_labels:
+        cluster: almadesk-edu
+        environment: production
+    scrape_configs:
+      - job_name: prometheus
+        static_configs:
+          - targets: ['localhost:{{ .Values.prometheus.port }}']
+      - job_name: almadesk-backend
+        metrics_path: /api/metrics
+        static_configs:
+          - targets: ['almadesk-backend:{{ .Values.backend.port }}']
+      - job_name: keycloak
+        metrics_path: /metrics
+        static_configs:
+          - targets: ['almadesk-keycloak:{{ .Values.keycloak.port }}']
+      - job_name: minio
+        metrics_path: /minio/v2/metrics/cluster
+        static_configs:
+          - targets: ['almadesk-minio:{{ .Values.minio.port }}']
+{{- end }}

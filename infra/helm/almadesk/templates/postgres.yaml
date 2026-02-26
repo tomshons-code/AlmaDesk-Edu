@@ -1,0 +1,93 @@
+{{- if .Values.postgres.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: almadesk-postgres
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: almadesk-postgres
+    {{- include "almadesk.labels" . | nindent 4 }}
+spec:
+  serviceName: almadesk-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: almadesk-postgres
+  template:
+    metadata:
+      labels:
+        app: almadesk-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.postgres.port }}
+          env:
+            - name: POSTGRES_USER
+              value: {{ .Values.postgres.auth.user | quote }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.postgres.auth.password | quote }}
+            - name: POSTGRES_DB
+              value: {{ .Values.postgres.auth.database | quote }}
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+            - name: init-scripts
+              mountPath: /docker-entrypoint-initdb.d
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", {{ .Values.postgres.auth.user | quote }}]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", {{ .Values.postgres.auth.user | quote }}]
+            initialDelaySeconds: 30
+            periodSeconds: 15
+      volumes:
+        - name: init-scripts
+          configMap:
+            name: almadesk-postgres-init
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        {{- if .Values.postgres.storage.storageClass }}
+        storageClassName: {{ .Values.postgres.storage.storageClass | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.postgres.storage.size }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: almadesk-postgres
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: almadesk-postgres
+    {{- include "almadesk.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.postgres.port }}
+      targetPort: {{ .Values.postgres.port }}
+      protocol: TCP
+      name: postgres
+  selector:
+    app: almadesk-postgres
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: almadesk-postgres-init
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: almadesk-postgres
+    {{- include "almadesk.labels" . | nindent 4 }}
+data:
+  init-keycloak.sql: |
+    SELECT 'CREATE DATABASE keycloak_db' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'keycloak_db')\gexec
+{{- end }}

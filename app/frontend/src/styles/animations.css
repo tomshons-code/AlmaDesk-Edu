@@ -1,0 +1,814 @@
+
+
+
+
+
+@keyframes orb-float-1 {
+  0%   { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(60px, -40px) scale(1.08); }
+  66%  { transform: translate(-30px, 30px) scale(0.95); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes orb-float-2 {
+  0%   { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(-50px, 50px) scale(1.05); }
+  66%  { transform: translate(40px, -20px) scale(0.92); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes orb-float-3 {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.35; }
+  50%  { transform: translate(30px, 40px) scale(1.1); opacity: 0.5; }
+  100% { transform: translate(0, 0) scale(1); opacity: 0.35; }
+}
+
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+@keyframes stagger-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+@keyframes shimmer-slide {
+  0%   { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(200%) skewX(-15deg); }
+}
+
+
+@keyframes gradient-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+@keyframes glow-pulse {
+  0%   { box-shadow: var(--glass-shadow); }
+  50%  { box-shadow: 0 8px 32px color-mix(in srgb, var(--color-primary) 25%, transparent); }
+  100% { box-shadow: var(--glass-shadow); }
+}
+
+
+@keyframes row-enter {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+
+
+
+.page-enter {
+  animation: page-enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+
+
+
+
+.stagger-children > * {
+  opacity: 0;
+  animation: stagger-fade-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.stagger-children > *:nth-child(1)  { animation-delay: 0.04s; }
+.stagger-children > *:nth-child(2)  { animation-delay: 0.08s; }
+.stagger-children > *:nth-child(3)  { animation-delay: 0.12s; }
+.stagger-children > *:nth-child(4)  { animation-delay: 0.16s; }
+.stagger-children > *:nth-child(5)  { animation-delay: 0.20s; }
+.stagger-children > *:nth-child(6)  { animation-delay: 0.24s; }
+.stagger-children > *:nth-child(7)  { animation-delay: 0.28s; }
+.stagger-children > *:nth-child(8)  { animation-delay: 0.32s; }
+.stagger-children > *:nth-child(9)  { animation-delay: 0.36s; }
+.stagger-children > *:nth-child(10) { animation-delay: 0.40s; }
+.stagger-children > *:nth-child(11) { animation-delay: 0.44s; }
+.stagger-children > *:nth-child(12) { animation-delay: 0.48s; }
+
+
+.stagger-rows > tr {
+  opacity: 0;
+  animation: row-enter 0.3s ease-out both;
+}
+
+.stagger-rows > tr:nth-child(1)  { animation-delay: 0.02s; }
+.stagger-rows > tr:nth-child(2)  { animation-delay: 0.04s; }
+.stagger-rows > tr:nth-child(3)  { animation-delay: 0.06s; }
+.stagger-rows > tr:nth-child(4)  { animation-delay: 0.08s; }
+.stagger-rows > tr:nth-child(5)  { animation-delay: 0.10s; }
+.stagger-rows > tr:nth-child(6)  { animation-delay: 0.12s; }
+.stagger-rows > tr:nth-child(7)  { animation-delay: 0.14s; }
+.stagger-rows > tr:nth-child(8)  { animation-delay: 0.16s; }
+.stagger-rows > tr:nth-child(9)  { animation-delay: 0.18s; }
+.stagger-rows > tr:nth-child(10) { animation-delay: 0.20s; }
+.stagger-rows > tr:nth-child(11) { animation-delay: 0.22s; }
+.stagger-rows > tr:nth-child(12) { animation-delay: 0.24s; }
+.stagger-rows > tr:nth-child(13) { animation-delay: 0.26s; }
+.stagger-rows > tr:nth-child(14) { animation-delay: 0.28s; }
+.stagger-rows > tr:nth-child(15) { animation-delay: 0.30s; }
+.stagger-rows > tr:nth-child(n+16) { animation-delay: 0.32s; }
+
+
+
+
+.card-hover-lift {
+  transition: transform var(--transition-normal),
+              box-shadow var(--transition-normal);
+}
+
+.card-hover-lift:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 12px 36px color-mix(in srgb, var(--color-primary) 18%, transparent);
+}
+
+.card-hover-lift:active {
+  transform: translateY(-2px) scale(0.995);
+}
+
+
+.card-hover-glow {
+  transition: box-shadow 0.4s ease, transform var(--transition-normal);
+}
+
+.card-hover-glow:hover {
+  animation: glow-pulse 2s ease-in-out infinite;
+  transform: translateY(-4px);
+}
+
+
+.card-hover-lift:hover .kpi-icon,
+.card-hover-lift:hover .portal-stat-icon,
+.card-hover-lift:hover .stat-icon,
+.card-hover-glow:hover .kpi-icon,
+.card-hover-glow:hover .portal-stat-icon,
+.card-hover-glow:hover .stat-icon {
+  transform: scale(1.12);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+
+
+.shimmer-hover {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.25) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: translateX(-100%) skewX(-15deg);
+  transition: none;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.shimmer-hover:hover::after {
+  animation: shimmer-slide 0.75s ease-out;
+}
+
+
+[data-theme="dark"] .shimmer-hover::after,
+[data-theme="corporate-dark"] .shimmer-hover::after,
+[data-theme="midnight-ink"] .shimmer-hover::after {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+
+
+
+.btn-gradient-animated {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-primary-dark) 40%,
+    var(--color-primary) 100%
+  );
+  background-size: 200% 200%;
+  transition: all var(--transition-normal);
+}
+
+.btn-gradient-animated:hover {
+  animation: gradient-shift 2s ease infinite;
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--color-primary) 35%, transparent);
+  transform: translateY(-1px);
+}
+
+.btn-gradient-animated:active {
+  transform: translateY(0);
+}
+
+
+
+
+
+.bg-orb-3 {
+  position: fixed;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%,
+    color-mix(in srgb, var(--color-primary) 30%, transparent),
+    rgba(255, 255, 255, 0));
+  filter: blur(70px);
+  opacity: 0.35;
+  z-index: -1;
+  pointer-events: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: orb-float-3 18s ease-in-out infinite;
+}
+
+
+
+
+.card-hover-lift:focus-visible,
+.card-hover-glow:focus-visible,
+.shimmer-hover:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+
+
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter,
+  .stagger-children > *,
+  .stagger-rows > tr,
+  .card-hover-lift,
+  .card-hover-glow,
+  .shimmer-hover::after,
+  .btn-gradient-animated,
+  .bg-orb-3 {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  body::before,
+  body::after {
+    animation: none !important;
+  }
+}
+
+
+
+
+
+
+.dashboard-home,
+.ticket-queue-page,
+.my-tickets-page,
+.agent-ticket-page,
+.users-page,
+.reports-container,
+.recurring-alerts-page,
+.change-requests-page,
+.change-request-form-page,
+.change-request-details-page,
+.portal-home,
+.create-ticket-page,
+.ticket-details-page,
+.login-container,
+.settings-wrapper,
+.kb-page,
+.kba-page,
+.kbe-page {
+  animation: page-enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+
+
+
+.kpi-grid > *,
+.dashboard-quick-actions > *,
+.dashboard-alerts-list > *,
+.portal-stats > *,
+.portal-tickets-list > *,
+.alerts-stats-grid > *,
+.alerts-list > .alert-card,
+.stats-grid > *,
+.reports-stats-grid > *,
+.reports-breakdown-grid > *,
+.kb-grid > *,
+.my-tickets-stats > *,
+.queue-stats-mini > *,
+.users-list > *,
+.agent-ratings-list > * {
+  opacity: 0;
+  animation: stagger-fade-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+
+.kpi-grid > *:nth-child(1),
+.dashboard-quick-actions > *:nth-child(1),
+.dashboard-alerts-list > *:nth-child(1),
+.portal-stats > *:nth-child(1),
+.portal-tickets-list > *:nth-child(1),
+.alerts-stats-grid > *:nth-child(1),
+.alerts-list > .alert-card:nth-child(1),
+.stats-grid > *:nth-child(1),
+.reports-stats-grid > *:nth-child(1),
+.reports-breakdown-grid > *:nth-child(1),
+.kb-grid > *:nth-child(1),
+.my-tickets-stats > *:nth-child(1),
+.queue-stats-mini > *:nth-child(1) { animation-delay: 0.05s; }
+
+.kpi-grid > *:nth-child(2),
+.dashboard-quick-actions > *:nth-child(2),
+.dashboard-alerts-list > *:nth-child(2),
+.portal-stats > *:nth-child(2),
+.portal-tickets-list > *:nth-child(2),
+.alerts-stats-grid > *:nth-child(2),
+.alerts-list > .alert-card:nth-child(2),
+.stats-grid > *:nth-child(2),
+.reports-stats-grid > *:nth-child(2),
+.reports-breakdown-grid > *:nth-child(2),
+.kb-grid > *:nth-child(2),
+.my-tickets-stats > *:nth-child(2),
+.queue-stats-mini > *:nth-child(2) { animation-delay: 0.10s; }
+
+.kpi-grid > *:nth-child(3),
+.dashboard-quick-actions > *:nth-child(3),
+.dashboard-alerts-list > *:nth-child(3),
+.portal-stats > *:nth-child(3),
+.portal-tickets-list > *:nth-child(3),
+.alerts-stats-grid > *:nth-child(3),
+.alerts-list > .alert-card:nth-child(3),
+.stats-grid > *:nth-child(3),
+.reports-stats-grid > *:nth-child(3),
+.reports-breakdown-grid > *:nth-child(3),
+.kb-grid > *:nth-child(3),
+.my-tickets-stats > *:nth-child(3),
+.queue-stats-mini > *:nth-child(3) { animation-delay: 0.15s; }
+
+.kpi-grid > *:nth-child(4),
+.dashboard-quick-actions > *:nth-child(4),
+.dashboard-alerts-list > *:nth-child(4),
+.portal-stats > *:nth-child(4),
+.portal-tickets-list > *:nth-child(4),
+.alerts-stats-grid > *:nth-child(4),
+.alerts-list > .alert-card:nth-child(4),
+.stats-grid > *:nth-child(4),
+.reports-stats-grid > *:nth-child(4),
+.reports-breakdown-grid > *:nth-child(4),
+.kb-grid > *:nth-child(4) { animation-delay: 0.20s; }
+
+.kpi-grid > *:nth-child(5),
+.dashboard-quick-actions > *:nth-child(5),
+.portal-tickets-list > *:nth-child(5),
+.alerts-list > .alert-card:nth-child(5),
+.kb-grid > *:nth-child(5) { animation-delay: 0.25s; }
+
+.kpi-grid > *:nth-child(6),
+.dashboard-quick-actions > *:nth-child(6),
+.portal-tickets-list > *:nth-child(6),
+.alerts-list > .alert-card:nth-child(6),
+.kb-grid > *:nth-child(6) { animation-delay: 0.30s; }
+
+.kpi-grid > *:nth-child(n+7),
+.portal-tickets-list > *:nth-child(n+7),
+.alerts-list > .alert-card:nth-child(n+7),
+.kb-grid > *:nth-child(n+7) { animation-delay: 0.35s; }
+
+
+
+.dashboard-tickets-table tbody > tr,
+.queue-table tbody > tr,
+.my-tickets-table tbody > tr,
+.reports-table tbody > tr,
+.requests-table table tbody > tr {
+  opacity: 0;
+  animation: row-enter 0.3s ease-out both;
+}
+
+.dashboard-tickets-table tbody > tr:nth-child(1),
+.queue-table tbody > tr:nth-child(1),
+.my-tickets-table tbody > tr:nth-child(1),
+.reports-table tbody > tr:nth-child(1),
+.requests-table table tbody > tr:nth-child(1) { animation-delay: 0.03s; }
+
+.dashboard-tickets-table tbody > tr:nth-child(2),
+.queue-table tbody > tr:nth-child(2),
+.my-tickets-table tbody > tr:nth-child(2),
+.reports-table tbody > tr:nth-child(2),
+.requests-table table tbody > tr:nth-child(2) { animation-delay: 0.06s; }
+
+.dashboard-tickets-table tbody > tr:nth-child(3),
+.queue-table tbody > tr:nth-child(3),
+.my-tickets-table tbody > tr:nth-child(3),
+.reports-table tbody > tr:nth-child(3),
+.requests-table table tbody > tr:nth-child(3) { animation-delay: 0.09s; }
+
+.dashboard-tickets-table tbody > tr:nth-child(4),
+.queue-table tbody > tr:nth-child(4),
+.my-tickets-table tbody > tr:nth-child(4),
+.reports-table tbody > tr:nth-child(4),
+.requests-table table tbody > tr:nth-child(4) { animation-delay: 0.12s; }
+
+.dashboard-tickets-table tbody > tr:nth-child(5),
+.queue-table tbody > tr:nth-child(5),
+.my-tickets-table tbody > tr:nth-child(5),
+.reports-table tbody > tr:nth-child(5),
+.requests-table table tbody > tr:nth-child(5) { animation-delay: 0.15s; }
+
+.dashboard-tickets-table tbody > tr:nth-child(6),
+.queue-table tbody > tr:nth-child(6),
+.my-tickets-table tbody > tr:nth-child(6),
+.reports-table tbody > tr:nth-child(6),
+.requests-table table tbody > tr:nth-child(6) { animation-delay: 0.18s; }
+
+.dashboard-tickets-table tbody > tr:nth-child(7),
+.queue-table tbody > tr:nth-child(7),
+.my-tickets-table tbody > tr:nth-child(7),
+.reports-table tbody > tr:nth-child(7),
+.requests-table table tbody > tr:nth-child(7) { animation-delay: 0.21s; }
+
+.dashboard-tickets-table tbody > tr:nth-child(8),
+.queue-table tbody > tr:nth-child(8),
+.my-tickets-table tbody > tr:nth-child(8),
+.reports-table tbody > tr:nth-child(8),
+.requests-table table tbody > tr:nth-child(8) { animation-delay: 0.24s; }
+
+.dashboard-tickets-table tbody > tr:nth-child(9),
+.queue-table tbody > tr:nth-child(9),
+.my-tickets-table tbody > tr:nth-child(9),
+.reports-table tbody > tr:nth-child(9),
+.requests-table table tbody > tr:nth-child(9) { animation-delay: 0.27s; }
+
+.dashboard-tickets-table tbody > tr:nth-child(10),
+.queue-table tbody > tr:nth-child(10),
+.my-tickets-table tbody > tr:nth-child(10),
+.reports-table tbody > tr:nth-child(10),
+.requests-table table tbody > tr:nth-child(10) { animation-delay: 0.30s; }
+
+.dashboard-tickets-table tbody > tr:nth-child(n+11),
+.queue-table tbody > tr:nth-child(n+11),
+.my-tickets-table tbody > tr:nth-child(n+11),
+.reports-table tbody > tr:nth-child(n+11),
+.requests-table table tbody > tr:nth-child(n+11) { animation-delay: 0.33s; }
+
+
+
+
+
+.kpi-card,
+.quick-action-card,
+.dashboard-stat-card,
+.dashboard-alert-card,
+.stat-mini,
+.my-stat-card,
+.portal-stat-card,
+.portal-ticket-card,
+.stat-card,
+.reports-stat-card,
+.reports-breakdown-card,
+.alert-card,
+.kb-card {
+  transition: transform var(--transition-normal) cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.kpi-card:hover,
+.quick-action-card:hover,
+.dashboard-stat-card:hover,
+.dashboard-alert-card:hover,
+.stat-mini:hover,
+.my-stat-card:hover,
+.portal-stat-card:hover,
+.portal-ticket-card:hover,
+.stat-card:hover,
+.reports-stat-card:hover,
+.reports-breakdown-card:hover,
+.alert-card:hover,
+.kb-card:hover {
+  transform: translateY(-6px) scale(1.008);
+  box-shadow: 0 14px 40px color-mix(in srgb, var(--color-primary) 18%, transparent);
+}
+
+
+.agent-ticket-card,
+.agent-sidebar-card,
+.ticket-card,
+.ticket-sidebar-card,
+.details-card,
+.sidebar-card,
+.settings-card,
+.login-card {
+  transition: box-shadow 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.agent-ticket-card:hover,
+.agent-sidebar-card:hover,
+.ticket-card:hover,
+.ticket-sidebar-card:hover,
+.details-card:hover,
+.sidebar-card:hover,
+.settings-card:hover,
+.login-card:hover {
+  box-shadow: 0 8px 28px color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.kpi-card:active,
+.quick-action-card:active,
+.portal-stat-card:active,
+.portal-ticket-card:active,
+.kb-card:active {
+  transform: translateY(-2px) scale(0.995);
+}
+
+
+.kpi-card::after,
+.quick-action-card::after,
+.dashboard-stat-card::after,
+.stat-mini::after,
+.my-stat-card::after,
+.portal-stat-card::after,
+.portal-ticket-card::after,
+.stat-card::after,
+.reports-stat-card::after,
+.reports-breakdown-card::after,
+.alert-card::after,
+.kb-card::after,
+.login-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.22) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: translateX(-100%) skewX(-15deg);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.kpi-card:hover::after,
+.quick-action-card:hover::after,
+.dashboard-stat-card:hover::after,
+.stat-mini:hover::after,
+.my-stat-card:hover::after,
+.portal-stat-card:hover::after,
+.portal-ticket-card:hover::after,
+.stat-card:hover::after,
+.reports-stat-card:hover::after,
+.reports-breakdown-card:hover::after,
+.alert-card:hover::after,
+.kb-card:hover::after,
+.login-card:hover::after {
+  animation: shimmer-slide 0.7s ease-out;
+}
+
+
+[data-theme="dark"] .kpi-card::after,
+[data-theme="dark"] .quick-action-card::after,
+[data-theme="dark"] .dashboard-stat-card::after,
+[data-theme="dark"] .stat-mini::after,
+[data-theme="dark"] .my-stat-card::after,
+[data-theme="dark"] .portal-stat-card::after,
+[data-theme="dark"] .stat-card::after,
+[data-theme="dark"] .reports-stat-card::after,
+[data-theme="dark"] .kb-card::after,
+[data-theme="dark"] .login-card::after,
+[data-theme="corporate-dark"] .kpi-card::after,
+[data-theme="corporate-dark"] .quick-action-card::after,
+[data-theme="corporate-dark"] .dashboard-stat-card::after,
+[data-theme="corporate-dark"] .stat-mini::after,
+[data-theme="corporate-dark"] .my-stat-card::after,
+[data-theme="corporate-dark"] .portal-stat-card::after,
+[data-theme="corporate-dark"] .stat-card::after,
+[data-theme="corporate-dark"] .reports-stat-card::after,
+[data-theme="corporate-dark"] .kb-card::after,
+[data-theme="corporate-dark"] .login-card::after,
+[data-theme="midnight-ink"] .kpi-card::after,
+[data-theme="midnight-ink"] .quick-action-card::after,
+[data-theme="midnight-ink"] .dashboard-stat-card::after,
+[data-theme="midnight-ink"] .stat-mini::after,
+[data-theme="midnight-ink"] .my-stat-card::after,
+[data-theme="midnight-ink"] .portal-stat-card::after,
+[data-theme="midnight-ink"] .stat-card::after,
+[data-theme="midnight-ink"] .reports-stat-card::after,
+[data-theme="midnight-ink"] .kb-card::after,
+[data-theme="midnight-ink"] .login-card::after {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+
+.kpi-card:hover .kpi-icon,
+.portal-stat-card:hover .portal-stat-icon,
+.stat-card:hover .stat-icon,
+.stat-mini:hover svg,
+.my-stat-card:hover svg,
+.reports-stat-card:hover svg,
+.quick-action-card:hover svg {
+  transform: scale(1.15);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+
+
+.dashboard-action-btn,
+.queue-register-btn,
+.portal-quick-action-btn.primary,
+.btn-generate-report,
+.kb-create-btn,
+.kbe-publish-btn,
+.login-button,
+.settings-save-btn,
+.agent-comment-form-submit,
+.comment-form-submit {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-primary-dark) 40%,
+    var(--color-primary) 100%
+  );
+  background-size: 200% 200%;
+  color: #fff;
+  border: none;
+}
+
+.dashboard-action-btn:hover,
+.queue-register-btn:hover,
+.portal-quick-action-btn.primary:hover,
+.btn-generate-report:hover,
+.kb-create-btn:hover,
+.kbe-publish-btn:hover,
+.login-button:hover,
+.settings-save-btn:hover,
+.agent-comment-form-submit:hover,
+.comment-form-submit:hover {
+  animation: gradient-shift 2s ease infinite;
+  box-shadow: 0 6px 22px color-mix(in srgb, var(--color-primary) 35%, transparent);
+  transform: translateY(-1px);
+}
+
+.dashboard-action-btn:active,
+.queue-register-btn:active,
+.portal-quick-action-btn.primary:active,
+.btn-generate-report:active,
+.kb-create-btn:active,
+.kbe-publish-btn:active,
+.login-button:active,
+.settings-save-btn:active,
+.agent-comment-form-submit:active,
+.comment-form-submit:active {
+  transform: translateY(0);
+}
+
+
+
+
+.dashboard-tickets-table tbody tr,
+.queue-table tbody tr,
+.my-tickets-table tbody tr,
+.reports-table tbody tr,
+.requests-table table tbody tr {
+  transition: background-color var(--transition-fast),
+              transform var(--transition-fast);
+}
+
+.dashboard-tickets-table tbody tr:hover,
+.queue-table tbody tr:hover,
+.my-tickets-table tbody tr:hover,
+.reports-table tbody tr:hover,
+.requests-table table tbody tr:hover {
+  background-color: color-mix(in srgb, var(--color-primary) 5%, transparent);
+}
+
+
+.users-table-row,
+.agent-ratings-row {
+  transition: background-color var(--transition-fast),
+              transform var(--transition-fast);
+}
+
+.users-table-row:hover,
+.agent-ratings-row:hover {
+  background-color: color-mix(in srgb, var(--color-primary) 5%, transparent);
+  transform: translateX(2px);
+}
+
+
+
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-home,
+  .ticket-queue-page,
+  .my-tickets-page,
+  .agent-ticket-page,
+  .users-page,
+  .reports-container,
+  .recurring-alerts-page,
+  .change-requests-page,
+  .change-request-form-page,
+  .change-request-details-page,
+  .portal-home,
+  .create-ticket-page,
+  .ticket-details-page,
+  .login-container,
+  .settings-wrapper,
+  .kb-page,
+  .kba-page,
+  .kbe-page {
+    animation: none !important;
+  }
+
+  .kpi-grid > *,
+  .dashboard-quick-actions > *,
+  .dashboard-alerts-list > *,
+  .portal-stats > *,
+  .portal-tickets-list > *,
+  .alerts-stats-grid > *,
+  .alerts-list > .alert-card,
+  .stats-grid > *,
+  .reports-stats-grid > *,
+  .reports-breakdown-grid > *,
+  .kb-grid > *,
+  .my-tickets-stats > *,
+  .queue-stats-mini > *,
+  .users-list > *,
+  .agent-ratings-list > * {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  .dashboard-tickets-table tbody > tr,
+  .queue-table tbody > tr,
+  .my-tickets-table tbody > tr,
+  .reports-table tbody > tr,
+  .requests-table table tbody > tr {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  .kpi-card::after,
+  .quick-action-card::after,
+  .dashboard-stat-card::after,
+  .stat-mini::after,
+  .my-stat-card::after,
+  .portal-stat-card::after,
+  .portal-ticket-card::after,
+  .stat-card::after,
+  .reports-stat-card::after,
+  .reports-breakdown-card::after,
+  .alert-card::after,
+  .kb-card::after,
+  .login-card::after {
+    display: none !important;
+  }
+}

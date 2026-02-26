@@ -1,0 +1,13 @@
+apiVersion: v2
+name: almadesk
+description: AlmaDesk-Edu — akademicki system helpdesk ITSM
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - helpdesk
+  - itsm
+  - education
+maintainers:
+  - name: tomshons-code
+    url: https://github.com/tomshons-code

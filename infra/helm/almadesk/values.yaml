@@ -1,0 +1,184 @@
+global:
+  namespace: almadesk
+  domain: almadesk.local
+
+backend:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/tomshons-code/almadesk-backend
+    tag: latest
+    pullPolicy: Always
+  port: 3001
+  env:
+    NODE_ENV: production
+    PORT: "3001"
+    JWT_SECRET: change-me-in-production
+    JWT_EXPIRES_IN: 24h
+    DATABASE_URL: postgresql://almadesk:almadesk_password_2026@almadesk-postgres:5432/almadesk_db
+    LOGS_DATABASE_URL: postgresql://almadesk_logs:almadesk_logs_password_2026@almadesk-postgres-logs:5432/almadesk_logs_db
+    REDIS_HOST: almadesk-redis
+    REDIS_PORT: "6379"
+    ELASTICSEARCH_URL: http://almadesk-elasticsearch:9200
+    MINIO_ENDPOINT: almadesk-minio
+    MINIO_PORT: "9000"
+    MINIO_ACCESS_KEY: almadesk
+    MINIO_SECRET_KEY: almadesk_minio_2026
+    MINIO_BUCKET: almadesk-attachments
+    MINIO_USE_SSL: "false"
+    KEYCLOAK_URL: http://almadesk-keycloak:8080
+    KEYCLOAK_REALM: almadesk
+    KEYCLOAK_CLIENT_ID: almadesk-app
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+frontend:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/tomshons-code/almadesk-frontend
+    tag: latest
+    pullPolicy: Always
+  port: 80
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+postgres:
+  enabled: true
+  image:
+    repository: postgres
+    tag: "17.2-alpine"
+  port: 5432
+  auth:
+    user: almadesk
+    password: almadesk_password_2026
+    database: almadesk_db
+  storage:
+    size: 10Gi
+    storageClass: ""
+
+postgresLogs:
+  enabled: true
+  image:
+    repository: postgres
+    tag: "17.2-alpine"
+  port: 5432
+  auth:
+    user: almadesk_logs
+    password: almadesk_logs_password_2026
+    database: almadesk_logs_db
+  storage:
+    size: 5Gi
+    storageClass: ""
+
+redis:
+  enabled: true
+  image:
+    repository: redis
+    tag: "8.0-M02-alpine"
+  port: 6379
+  storage:
+    size: 2Gi
+    storageClass: ""
+
+elasticsearch:
+  enabled: true
+  image:
+    repository: docker.elastic.co/elasticsearch/elasticsearch
+    tag: "8.11.3"
+  port: 9200
+  javaOpts: "-Xms512m -Xmx512m"
+  storage:
+    size: 10Gi
+    storageClass: ""
+
+keycloak:
+  enabled: true
+  image:
+    repository: quay.io/keycloak/keycloak
+    tag: "23.0"
+  port: 8080
+  admin:
+    user: admin
+    password: admin
+  db:
+    url: jdbc:postgresql://almadesk-postgres:5432/keycloak_db
+    user: almadesk
+    password: almadesk_password_2026
+  storage:
+    size: 1Gi
+    storageClass: ""
+
+minio:
+  enabled: true
+  image:
+    repository: minio/minio
+    tag: latest
+  port: 9000
+  consolePort: 9001
+  auth:
+    rootUser: almadesk
+    rootPassword: almadesk_minio_2026
+  storage:
+    size: 20Gi
+    storageClass: ""
+
+pgadmin:
+  enabled: true
+  image:
+    repository: dpage/pgadmin4
+    tag: latest
+  port: 80
+  auth:
+    email: admin@almadesk.com
+    password: admin
+
+prometheus:
+  enabled: true
+  image:
+    repository: prom/prometheus
+    tag: latest
+  port: 9090
+  retention: 30d
+  storage:
+    size: 10Gi
+    storageClass: ""
+
+grafana:
+  enabled: true
+  image:
+    repository: grafana/grafana
+    tag: latest
+  port: 3000
+  admin:
+    user: admin
+    password: admin
+  storage:
+    size: 5Gi
+    storageClass: ""
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations: {}
+  hosts:
+    - host: almadesk.local
+      paths:
+        - path: /
+          service: frontend
+          port: 80
+        - path: /api
+          service: backend
+          port: 3001
+        - path: /auth
+          service: keycloak
+          port: 8080
+  tls: []

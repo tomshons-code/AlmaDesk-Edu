@@ -1,0 +1,4 @@
+ALTER TABLE "users" ADD COLUMN "notifyEmail" BOOLEAN NOT NULL DEFAULT true;
+ALTER TABLE "users" ADD COLUMN "notifyBrowser" BOOLEAN NOT NULL DEFAULT true;
+ALTER TABLE "users" ADD COLUMN "notifyTicketUpdates" BOOLEAN NOT NULL DEFAULT true;
+ALTER TABLE "users" ADD COLUMN "notifyAssignments" BOOLEAN NOT NULL DEFAULT true;

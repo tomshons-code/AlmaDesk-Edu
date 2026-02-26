@@ -1,0 +1,48 @@
+
+
+[data-theme="copper-glow"] {
+
+  --color-primary: #b45309;
+  --color-primary-dark: #92400e;
+  --color-primary-light: #fdba74;
+
+
+  --color-accent: #f97316;
+  --color-accent-hover: #ea580c;
+
+
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #38bdf8;
+
+
+  --color-text-primary: #1f2937;
+  --color-text-secondary: #6b7280;
+  --color-text-tertiary: #94a3b8;
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #fff7ed;
+  --color-bg-tertiary: #ffedd5;
+
+
+  --color-border-light: rgba(180, 83, 9, 0.2);
+  --color-border-medium: rgba(180, 83, 9, 0.4);
+
+
+  --glass-bg: rgba(255, 255, 255, 0.54);
+  --glass-bg-strong: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(253, 186, 116, 0.45);
+  --glass-border-strong: rgba(180, 83, 9, 0.35);
+  --glass-shadow: 0 18px 40px rgba(124, 45, 18, 0.18);
+  --glass-highlight: linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 45%),
+    linear-gradient(315deg, rgba(254, 215, 170, 0.45) 0%, rgba(255, 255, 255, 0) 55%);
+  --glass-sheen: linear-gradient(120deg, rgba(255, 255, 255, 0.6) 0%, rgba(253, 186, 116, 0.25) 45%, rgba(255, 255, 255, 0) 70%);
+
+
+  --gradient-primary: linear-gradient(135deg, #b45309 0%, #92400e 100%);
+  --gradient-background: linear-gradient(135deg, #ffedd5 0%, #fde68a 55%, #fff7ed 100%);
+
+
+  --page-bg: radial-gradient(900px circle at 12% 8%, rgba(254, 215, 170, 0.85) 0%, rgba(255, 255, 255, 0.6) 40%, rgba(226, 232, 240, 0.75) 70%, rgba(248, 250, 252, 1) 100%),
+    linear-gradient(180deg, #fff7ed 0%, #f8fafc 100%);
+}

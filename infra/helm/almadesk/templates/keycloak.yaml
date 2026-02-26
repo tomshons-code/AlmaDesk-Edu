@@ -1,0 +1,101 @@
+{{- if .Values.keycloak.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: almadesk-keycloak
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: almadesk-keycloak
+    {{- include "almadesk.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: almadesk-keycloak
+  template:
+    metadata:
+      labels:
+        app: almadesk-keycloak
+    spec:
+      containers:
+        - name: keycloak
+          image: "{{ .Values.keycloak.image.repository }}:{{ .Values.keycloak.image.tag }}"
+          args: ["start-dev"]
+          ports:
+            - containerPort: {{ .Values.keycloak.port }}
+          env:
+            - name: KEYCLOAK_ADMIN
+              value: {{ .Values.keycloak.admin.user | quote }}
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              value: {{ .Values.keycloak.admin.password | quote }}
+            - name: KC_DB
+              value: postgres
+            - name: KC_DB_URL
+              value: {{ .Values.keycloak.db.url | quote }}
+            - name: KC_DB_USERNAME
+              value: {{ .Values.keycloak.db.user | quote }}
+            - name: KC_DB_PASSWORD
+              value: {{ .Values.keycloak.db.password | quote }}
+            - name: KC_HTTP_ENABLED
+              value: "true"
+            - name: KC_HEALTH_ENABLED
+              value: "true"
+            - name: KC_METRICS_ENABLED
+              value: "true"
+            - name: KC_HOSTNAME
+              value: {{ .Values.global.domain | quote }}
+          volumeMounts:
+            - name: keycloak-data
+              mountPath: /opt/keycloak/data
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: {{ .Values.keycloak.port }}
+            initialDelaySeconds: 60
+            periodSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: {{ .Values.keycloak.port }}
+            initialDelaySeconds: 120
+            periodSeconds: 30
+      volumes:
+        - name: keycloak-data
+          persistentVolumeClaim:
+            claimName: almadesk-keycloak-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: almadesk-keycloak-data
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: almadesk-keycloak
+    {{- include "almadesk.labels" . | nindent 4 }}
+spec:
+  accessModes: ["ReadWriteOnce"]
+  {{- if .Values.keycloak.storage.storageClass }}
+  storageClassName: {{ .Values.keycloak.storage.storageClass | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.keycloak.storage.size }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: almadesk-keycloak
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: almadesk-keycloak
+    {{- include "almadesk.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.keycloak.port }}
+      targetPort: {{ .Values.keycloak.port }}
+      protocol: TCP
+      name: http
+  selector:
+    app: almadesk-keycloak
+{{- end }}

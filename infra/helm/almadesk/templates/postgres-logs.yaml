@@ -1,0 +1,70 @@
+{{- if .Values.postgresLogs.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: almadesk-postgres-logs
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: almadesk-postgres-logs
+    {{- include "almadesk.labels" . | nindent 4 }}
+spec:
+  serviceName: almadesk-postgres-logs
+  replicas: 1
+  selector:
+    matchLabels:
+      app: almadesk-postgres-logs
+  template:
+    metadata:
+      labels:
+        app: almadesk-postgres-logs
+    spec:
+      containers:
+        - name: postgres
+          image: "{{ .Values.postgresLogs.image.repository }}:{{ .Values.postgresLogs.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.postgresLogs.port }}
+          env:
+            - name: POSTGRES_USER
+              value: {{ .Values.postgresLogs.auth.user | quote }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.postgresLogs.auth.password | quote }}
+            - name: POSTGRES_DB
+              value: {{ .Values.postgresLogs.auth.database | quote }}
+          volumeMounts:
+            - name: postgres-logs-data
+              mountPath: /var/lib/postgresql/data
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", {{ .Values.postgresLogs.auth.user | quote }}]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-logs-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        {{- if .Values.postgresLogs.storage.storageClass }}
+        storageClassName: {{ .Values.postgresLogs.storage.storageClass | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.postgresLogs.storage.size }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: almadesk-postgres-logs
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    app: almadesk-postgres-logs
+    {{- include "almadesk.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.postgresLogs.port }}
+      targetPort: {{ .Values.postgresLogs.port }}
+      protocol: TCP
+      name: postgres
+  selector:
+    app: almadesk-postgres-logs
+{{- end }}

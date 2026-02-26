@@ -1,0 +1,542 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int      @id @default(autoincrement())
+  login          String   @unique
+  email          String   @unique
+  name           String
+  password       String
+  role           Role     @default(KLIENT)
+  agentSignature String?
+  phone          String?
+  department     String?
+  location       String?
+
+  notifyEmail          Boolean @default(true)
+  notifyBrowser        Boolean @default(true)
+  notifyTicketUpdates  Boolean @default(true)
+  notifyAssignments    Boolean @default(true)
+
+  mfaEnabled     Boolean  @default(false)
+  mfaSecret      String?
+  mfaBackupCodes String[]
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  createdTickets        Ticket[]               @relation("TicketCreator")
+  assignedTickets       Ticket[]               @relation("TicketAssignee")
+  comments              Comment[]
+  auditLogs             AuditLog[]
+  responseTemplates     ResponseTemplate[]
+  acknowledgedAlerts    RecurringAlert[]
+  knowledgeBaseArticles KnowledgeBaseArticle[]
+  organizationalUnit    OrganizationalUnit?    @relation(fields: [organizationalUnitId], references: [id])
+  organizationalUnitId  Int?
+
+  requestedChanges ChangeRequest[]  @relation("ChangeRequester")
+  assignedChanges  ChangeRequest[]  @relation("ChangeImplementer")
+  approvedChanges  ChangeRequest[]  @relation("ChangeApprover")
+  changeAuditLogs  ChangeAuditLog[]
+
+  @@map("users")
+}
+
+model Ticket {
+  id          Int            @id @default(autoincrement())
+  title       String
+  description String
+  status      TicketStatus   @default(OPEN)
+  priority    TicketPriority @default(MEDIUM)
+  category    TicketCategory @default(OTHER)
+  isArchived  Boolean        @default(false)
+  source      TicketSource   @default(PORTAL)
+
+  location   String?
+  department String?
+  laboratory String?
+
+  createdById Int
+  createdBy   User @relation("TicketCreator", fields: [createdById], references: [id])
+
+  assignedToId Int?
+  assignedTo   User? @relation("TicketAssignee", fields: [assignedToId], references: [id])
+
+  organizationalUnitId Int?
+  organizationalUnit   OrganizationalUnit? @relation(fields: [organizationalUnitId], references: [id])
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  resolvedAt DateTime?
+  archivedAt DateTime?
+
+  rating        Int?
+  ratingComment String?
+  ratedAt       DateTime?
+
+  comments        Comment[]
+  attachments     Attachment[]
+  tags            TicketTag[]
+  auditLogs       AuditLog[]
+  recurringAlerts RecurringAlertTicket[]
+
+  @@index([status, priority])
+  @@index([createdById])
+  @@index([assignedToId])
+  @@index([isArchived])
+  @@map("tickets")
+}
+
+model Comment {
+  id         Int     @id @default(autoincrement())
+  content    String
+  isInternal Boolean @default(false)
+  isEdited   Boolean @default(false)
+
+  ticketId Int
+  ticket   Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  authorId Int
+  author   User @relation(fields: [authorId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  attachments Attachment[]
+
+  @@index([ticketId])
+  @@index([authorId])
+  @@map("comments")
+}
+
+model OrganizationalUnit {
+  id           Int                    @id @default(autoincrement())
+  name         String
+  type         OrganizationalUnitType
+  code         String?                @unique
+  parentId     Int?
+  parent       OrganizationalUnit?    @relation("UnitHierarchy", fields: [parentId], references: [id])
+  children     OrganizationalUnit[]   @relation("UnitHierarchy")
+  description  String?
+  location     String?
+  contactEmail String?
+  contactPhone String?
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
+
+  users            User[]
+  tickets          Ticket[]
+  categoryMappings CategoryMapping[]
+
+  @@map("organizational_units")
+}
+
+model Tag {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  color     String?
+  createdAt DateTime @default(now())
+
+  tickets TicketTag[]
+
+  @@map("tags")
+}
+
+model TicketTag {
+  ticketId Int
+  ticket   Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  tagId Int
+  tag   Tag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  assignedAt DateTime @default(now())
+
+  @@id([ticketId, tagId])
+  @@map("ticket_tags")
+}
+
+model Attachment {
+  id           Int    @id @default(autoincrement())
+  filename     String
+  originalName String
+  mimeType     String
+  size         Int
+  minioKey     String
+  minioBucket  String @default("almadesk-attachments")
+
+  ticketId Int?
+  ticket   Ticket? @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  commentId Int?
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  knowledgeBaseArticleId Int?
+  knowledgeBaseArticle   KnowledgeBaseArticle? @relation(fields: [knowledgeBaseArticleId], references: [id], onDelete: Cascade)
+
+  uploadedAt DateTime @default(now())
+
+  @@index([ticketId])
+  @@index([commentId])
+  @@index([knowledgeBaseArticleId])
+  @@map("attachments")
+}
+
+model ResponseTemplate {
+  id       Int             @id @default(autoincrement())
+  title    String
+  content  String
+  category TicketCategory?
+
+  createdById Int
+  createdBy   User @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  isPublic Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([createdById])
+  @@index([category])
+  @@map("response_templates")
+}
+
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  action     String
+  entityType String
+  entityId   Int?
+  userId     Int?
+  user       User?    @relation(fields: [userId], references: [id])
+  ticketId   Int?
+  ticket     Ticket?  @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ipAddress  String?
+  userAgent  String?
+  changes    Json?
+  timestamp  DateTime @default(now())
+
+  @@index([userId])
+  @@index([ticketId])
+  @@index([entityType, entityId])
+  @@index([timestamp])
+  @@map("audit_logs")
+}
+
+model SystemSettings {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String?
+  category  String   @default("general")
+  isSecret  Boolean  @default(false)
+  updatedAt DateTime @updatedAt
+  updatedBy Int?
+
+  @@index([category])
+  @@map("system_settings")
+}
+
+model CategoryMapping {
+  id                   Int                @id @default(autoincrement())
+  category             TicketCategory
+  organizationalUnitId Int
+  organizationalUnit   OrganizationalUnit @relation(fields: [organizationalUnitId], references: [id], onDelete: Cascade)
+  description          String?
+  isActive             Boolean            @default(true)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  @@unique([category, organizationalUnitId])
+  @@index([category])
+  @@index([organizationalUnitId])
+  @@map("category_mappings")
+}
+
+enum Role {
+  KLIENT
+  AGENT
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+  PENDING
+  ON_HOLD
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+  ESCALATED
+}
+
+enum TicketCategory {
+  HARDWARE
+  SOFTWARE
+  NETWORK
+  ACCOUNT
+  EMAIL
+  PRINTER
+  ACCESS
+  INFRASTRUCTURE
+  OTHER
+}
+
+enum TicketSource {
+  PORTAL
+  EMAIL
+  PHONE
+  CHAT
+  TEAMS
+  WALK_IN
+}
+
+enum OrganizationalUnitType {
+  FACULTY
+  DEPARTMENT
+  LABORATORY
+  BUILDING
+  ROOM
+  OFFICE
+  OTHER
+}
+
+model RecurringAlert {
+  id       Int                    @id @default(autoincrement())
+  title    String
+  pattern  String
+  category TicketCategory?
+  status   RecurringAlertStatus   @default(ACTIVE)
+  severity RecurringAlertSeverity @default(MEDIUM)
+
+  occurrenceCount Int      @default(0)
+  affectedUsers   Int      @default(0)
+  firstOccurrence DateTime
+  lastOccurrence  DateTime
+
+  suggestedAction String?
+  rootCause       String?
+  keywords        String[]
+
+  acknowledgedById Int?
+  acknowledgedBy   User?     @relation(fields: [acknowledgedById], references: [id])
+  acknowledgedAt   DateTime?
+  resolvedAt       DateTime?
+  notes            String?
+
+  tickets RecurringAlertTicket[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([category])
+  @@index([severity])
+  @@index([firstOccurrence])
+  @@map("recurring_alerts")
+}
+
+model RecurringAlertTicket {
+  alertId Int
+  alert   RecurringAlert @relation(fields: [alertId], references: [id], onDelete: Cascade)
+
+  ticketId Int
+  ticket   Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  addedAt    DateTime @default(now())
+  confidence Float    @default(1.0)
+
+  @@id([alertId, ticketId])
+  @@map("recurring_alert_tickets")
+}
+
+enum RecurringAlertStatus {
+  ACTIVE
+  ACKNOWLEDGED
+  RESOLVED
+  DISMISSED
+}
+
+enum RecurringAlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model KnowledgeBaseArticle {
+  id       Int                   @id @default(autoincrement())
+  title    String
+  slug     String                @unique
+  content  String                @db.Text
+  excerpt  String?
+  category KnowledgeBaseCategory @default(OTHER)
+  status   KnowledgeBaseStatus   @default(DRAFT)
+  isFolder Boolean               @default(false)
+
+  parentId Int?
+  parent   KnowledgeBaseArticle?  @relation("ArticleHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children KnowledgeBaseArticle[] @relation("ArticleHierarchy")
+
+  viewCount       Int @default(0)
+  helpfulCount    Int @default(0)
+  notHelpfulCount Int @default(0)
+
+  relatedTicketCategories TicketCategory[]
+  tags                    String[]
+  attachments             Attachment[]
+
+  authorId Int
+  author   User @relation(fields: [authorId], references: [id])
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  publishedAt DateTime?
+
+  metaDescription String?
+  keywords        String[]
+
+  @@index([status])
+  @@index([category])
+  @@index([slug])
+  @@index([authorId])
+  @@index([parentId])
+  @@index([isFolder])
+  @@map("knowledge_base_articles")
+}
+
+enum KnowledgeBaseCategory {
+  HARDWARE
+  SOFTWARE
+  NETWORK
+  ACCOUNT_ACCESS
+  EMAIL
+  PRINTING
+  SECURITY
+  MOBILE
+  OFFICE_APPS
+  UNIVERSITY_SYSTEMS
+  OTHER
+}
+
+enum KnowledgeBaseStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model ChangeRequest {
+  id Int @id @default(autoincrement())
+
+  title         String
+  description   String @db.Text
+  justification String @db.Text
+
+  impactAnalysis String? @db.Text
+  riskAssessment String? @db.Text
+  rollbackPlan   String? @db.Text
+  testPlan       String? @db.Text
+
+  status   ChangeStatus   @default(DRAFT)
+  priority ChangePriority @default(MEDIUM)
+  category ChangeCategory @default(NORMAL)
+
+  scheduledStart DateTime?
+  scheduledEnd   DateTime?
+  implementedAt  DateTime?
+  verifiedAt     DateTime?
+  closedAt       DateTime?
+
+  requestedById Int
+  requestedBy   User @relation("ChangeRequester", fields: [requestedById], references: [id])
+
+  assignedToId Int?
+  assignedTo   User? @relation("ChangeImplementer", fields: [assignedToId], references: [id])
+
+  approvedById Int?
+  approvedBy   User?     @relation("ChangeApprover", fields: [approvedById], references: [id])
+  approvedAt   DateTime?
+
+  implementationNotes String? @db.Text
+  verificationNotes   String? @db.Text
+
+  affectedServices String[]
+  relatedTicketIds Int[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  auditLogs ChangeAuditLog[]
+
+  @@index([status])
+  @@index([priority])
+  @@index([category])
+  @@index([requestedById])
+  @@index([assignedToId])
+  @@index([scheduledStart])
+  @@map("change_requests")
+}
+
+model ChangeAuditLog {
+  id              Int           @id @default(autoincrement())
+  changeRequestId Int
+  changeRequest   ChangeRequest @relation(fields: [changeRequestId], references: [id], onDelete: Cascade)
+
+  action    String
+  fromValue String?
+  toValue   String?
+  comment   String? @db.Text
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  timestamp DateTime @default(now())
+  ipAddress String?
+  userAgent String?
+
+  @@index([changeRequestId])
+  @@index([userId])
+  @@index([timestamp])
+  @@map("change_audit_logs")
+}
+
+enum ChangeStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  SCHEDULED
+  IN_PROGRESS
+  IMPLEMENTED
+  VERIFIED
+  FAILED
+  CLOSED
+  CANCELLED
+}
+
+enum ChangePriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+  EMERGENCY
+}
+
+enum ChangeCategory {
+  STANDARD
+  NORMAL
+  EMERGENCY
+  MAJOR
+}

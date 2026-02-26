@@ -1,0 +1,279 @@
+
+
+.rmodal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  backdrop-filter: blur(3px);
+}
+
+.rmodal-box {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.rmodal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.rmodal-header h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.rmodal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  transition: background 0.15s, color 0.15s;
+}
+
+.rmodal-close:hover {
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  color: var(--color-text-primary);
+}
+
+
+.rmodal-form {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.rmodal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.rmodal-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.rmodal-input,
+.rmodal-select,
+.rmodal-textarea {
+  background: var(--color-input-bg, var(--color-surface-raised));
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.95rem;
+  color: var(--color-text-primary);
+  width: 100%;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.rmodal-input:focus,
+.rmodal-select:focus,
+.rmodal-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.rmodal-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.rmodal-select {
+  cursor: pointer;
+  appearance: auto;
+}
+
+.rmodal-hint {
+  font-size: 0.78rem;
+  color: var(--color-text-tertiary);
+}
+
+.rmodal-row {
+  display: flex;
+  gap: 1rem;
+}
+
+
+.rmodal-source-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+}
+
+.rmodal-source-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.75rem 0.5rem;
+  background: var(--color-surface-raised, var(--color-surface));
+  border: 2px solid var(--color-border);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  transition: all 0.15s;
+}
+
+.rmodal-source-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-light, color-mix(in srgb, var(--color-primary) 8%, transparent));
+}
+
+.rmodal-source-btn.active {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light, color-mix(in srgb, var(--color-primary) 12%, transparent));
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+
+.rmodal-error {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: color-mix(in srgb, var(--color-error) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-error) 30%, transparent);
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  font-size: 0.875rem;
+  color: var(--color-error);
+}
+
+
+.rmodal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.rmodal-btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.rmodal-btn-primary:hover { opacity: 0.9; }
+.rmodal-btn-primary:active { transform: scale(0.98); }
+.rmodal-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.rmodal-btn-secondary {
+  background: var(--color-surface-raised, transparent);
+  color: var(--color-text-secondary);
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.6rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.rmodal-btn-secondary:hover { background: color-mix(in srgb, var(--color-primary) 10%, transparent); }
+
+
+.rmodal-success {
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.75rem;
+}
+
+.rmodal-success h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.rmodal-success p {
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.rmodal-success-meta {
+  font-size: 0.9rem;
+  color: var(--color-text-tertiary);
+}
+
+.rmodal-success-actions {
+  margin-top: 1rem;
+}
+
+
+[data-theme="dark"] .rmodal-box,
+[data-theme="corporate-dark"] .rmodal-box {
+  background: var(--color-surface);
+}
+
+[data-theme="dark"] .rmodal-input,
+[data-theme="dark"] .rmodal-select,
+[data-theme="dark"] .rmodal-textarea,
+[data-theme="corporate-dark"] .rmodal-input,
+[data-theme="corporate-dark"] .rmodal-select,
+[data-theme="corporate-dark"] .rmodal-textarea {
+  background: var(--color-surface-raised);
+  color: var(--color-text-primary);
+}
+
+
+.source-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.source-badge.source-portal    { background: color-mix(in srgb, var(--color-primary) 12%, transparent); color: var(--color-primary); }
+.source-badge.source-email     { background: color-mix(in srgb, var(--color-success) 12%, transparent); color: var(--color-success); }
+.source-badge.source-phone     { background: color-mix(in srgb, var(--color-warning) 12%, transparent); color: var(--color-warning); }
+.source-badge.source-chat      { background: color-mix(in srgb, var(--color-info) 12%, transparent); color: var(--color-info); }
+.source-badge.source-walk-in   { background: color-mix(in srgb, var(--color-accent) 12%, transparent); color: var(--color-accent); }
+.source-badge.source-teams     { background: color-mix(in srgb, var(--color-text-secondary) 12%, transparent); color: var(--color-text-secondary); }

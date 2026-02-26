@@ -1,0 +1,56 @@
+global:
+  namespace: almadesk
+  domain: almadesk.twoja-domena.pl
+
+backend:
+  image:
+    tag: latest
+  env:
+    JWT_SECRET: WYGENERUJ-LOSOWY-KLUCZ-MIN-32-ZNAKI
+    DATABASE_URL: postgresql://almadesk:ZMIEN_HASLO@almadesk-postgres:5432/almadesk_db
+    LOGS_DATABASE_URL: postgresql://almadesk_logs:ZMIEN_HASLO@almadesk-postgres-logs:5432/almadesk_logs_db
+    MINIO_SECRET_KEY: ZMIEN_HASLO_MINIO
+
+postgres:
+  auth:
+    password: ZMIEN_HASLO
+
+postgresLogs:
+  auth:
+    password: ZMIEN_HASLO
+
+keycloak:
+  admin:
+    password: ZMIEN_HASLO_KEYCLOAK
+  db:
+    password: ZMIEN_HASLO
+
+minio:
+  auth:
+    rootPassword: ZMIEN_HASLO_MINIO
+
+grafana:
+  admin:
+    password: ZMIEN_HASLO_GRAFANA
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: almadesk.twoja-domena.pl
+      paths:
+        - path: /
+          service: frontend
+          port: 80
+        - path: /api
+          service: backend
+          port: 3001
+        - path: /auth
+          service: keycloak
+          port: 8080
+  tls:
+    - secretName: almadesk-tls
+      hosts:
+        - almadesk.twoja-domena.pl
