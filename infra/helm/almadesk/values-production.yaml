@@ -8,8 +8,11 @@ backend:
   env:
     JWT_SECRET: WYGENERUJ-LOSOWY-KLUCZ-MIN-32-ZNAKI
     DATABASE_URL: postgresql://almadesk:ZMIEN_HASLO@almadesk-postgres:5432/almadesk_db
-    LOGS_DATABASE_URL: postgresql://almadesk_logs:ZMIEN_HASLO@almadesk-postgres-logs:5432/almadesk_logs_db
+    DATABASE_LOGS_URL: postgresql://almadesk_logs:ZMIEN_HASLO@almadesk-postgres-logs:5432/almadesk_logs_db
     MINIO_SECRET_KEY: ZMIEN_HASLO_MINIO
+    CORS_ORIGIN: https://sv.houseinn.org
+    FRONTEND_URL: https://sv.houseinn.org
+    KEYCLOAK_URL: http://almadesk-keycloak:8080/auth
 
 postgres:
   auth:
@@ -36,7 +39,10 @@ grafana:
 ingress:
   enabled: true
   className: nginx
-  annotations: {}
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "120"
   hosts:
     - host: sv.houseinn.org
       paths:

@@ -21,7 +21,8 @@ spec:
       containers:
         - name: minio
           image: "{{ .Values.minio.image.repository }}:{{ .Values.minio.image.tag }}"
-          command: ["server", "/data", "--console-address", ":{{ .Values.minio.consolePort }}"]
+          command: ["minio"]
+          args: ["server", "/data", "--console-address", ":{{ .Values.minio.consolePort }}"]
           ports:
             - containerPort: {{ .Values.minio.port }}
               name: api

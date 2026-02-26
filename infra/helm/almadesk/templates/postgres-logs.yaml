@@ -30,6 +30,8 @@ spec:
               value: {{ .Values.postgresLogs.auth.password | quote }}
             - name: POSTGRES_DB
               value: {{ .Values.postgresLogs.auth.database | quote }}
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
           volumeMounts:
             - name: postgres-logs-data
               mountPath: /var/lib/postgresql/data
@@ -38,6 +40,11 @@ spec:
               command: ["pg_isready", "-U", {{ .Values.postgresLogs.auth.user | quote }}]
             initialDelaySeconds: 10
             periodSeconds: 10
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", {{ .Values.postgresLogs.auth.user | quote }}]
+            initialDelaySeconds: 30
+            periodSeconds: 15
   volumeClaimTemplates:
     - metadata:
         name: postgres-logs-data

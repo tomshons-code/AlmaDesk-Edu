@@ -15,19 +15,25 @@ backend:
     JWT_SECRET: change-me-in-production
     JWT_EXPIRES_IN: 24h
     DATABASE_URL: postgresql://almadesk:almadesk_password_2026@almadesk-postgres:5432/almadesk_db
-    LOGS_DATABASE_URL: postgresql://almadesk_logs:almadesk_logs_password_2026@almadesk-postgres-logs:5432/almadesk_logs_db
+    DATABASE_LOGS_URL: postgresql://almadesk_logs:almadesk_logs_password_2026@almadesk-postgres-logs:5432/almadesk_logs_db
     REDIS_HOST: almadesk-redis
     REDIS_PORT: "6379"
-    ELASTICSEARCH_URL: http://almadesk-elasticsearch:9200
+    REDIS_PASSWORD: ""
+    ELASTICSEARCH_NODE: http://almadesk-elasticsearch:9200
+    ELASTICSEARCH_INDEX: almadesk-tickets
     MINIO_ENDPOINT: almadesk-minio
     MINIO_PORT: "9000"
     MINIO_ACCESS_KEY: almadesk
     MINIO_SECRET_KEY: almadesk_minio_2026
     MINIO_BUCKET: almadesk-attachments
     MINIO_USE_SSL: "false"
-    KEYCLOAK_URL: http://almadesk-keycloak:8080
+    KEYCLOAK_URL: http://almadesk-keycloak:8080/auth
     KEYCLOAK_REALM: almadesk
-    KEYCLOAK_CLIENT_ID: almadesk-app
+    KEYCLOAK_CLIENT_ID: almadesk-backend
+    KEYCLOAK_CLIENT_SECRET: ""
+    KEYCLOAK_PUBLIC_CLIENT_ID: almadesk-app
+    CORS_ORIGIN: http://almadesk.local
+    FRONTEND_URL: http://almadesk.local
   resources:
     requests:
       cpu: 100m

@@ -44,18 +44,24 @@ spec:
               value: "true"
             - name: KC_HOSTNAME
               value: {{ .Values.global.domain | quote }}
+            - name: KC_HTTP_RELATIVE_PATH
+              value: /auth
+            - name: KC_HOSTNAME_PATH
+              value: /auth
+            - name: KC_PROXY_HEADERS
+              value: xforwarded
           volumeMounts:
             - name: keycloak-data
               mountPath: /opt/keycloak/data
           readinessProbe:
             httpGet:
-              path: /health/ready
+              path: /auth/health/ready
               port: {{ .Values.keycloak.port }}
             initialDelaySeconds: 60
             periodSeconds: 15
           livenessProbe:
             httpGet:
-              path: /health/live
+              path: /auth/health/live
               port: {{ .Values.keycloak.port }}
             initialDelaySeconds: 120
             periodSeconds: 30
