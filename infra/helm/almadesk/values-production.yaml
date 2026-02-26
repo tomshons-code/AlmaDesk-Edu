@@ -1,6 +1,6 @@
 global:
   namespace: almadesk
-  domain: almadesk.twoja-domena.pl
+  domain: sv.houseinn.org
 
 backend:
   image:
@@ -36,10 +36,9 @@ grafana:
 ingress:
   enabled: true
   className: nginx
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+  annotations: {}
   hosts:
-    - host: almadesk.twoja-domena.pl
+    - host: sv.houseinn.org
       paths:
         - path: /
           service: frontend
@@ -50,7 +49,4 @@ ingress:
         - path: /auth
           service: keycloak
           port: 8080
-  tls:
-    - secretName: almadesk-tls
-      hosts:
-        - almadesk.twoja-domena.pl
+  tls: []
