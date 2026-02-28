@@ -414,7 +414,7 @@ const SSOSettings = () => {
                 onChange={(e) => handleChange('sso_gitlab_url', e.target.value)}
                 placeholder="https://gitlab.com"
               />
-              <small>Dla self-hosted: https:
+              <small>Dla self-hosted: podaj URL instancji GitLab</small>
             </div>
             <div className="sso-form-group">
               <label>Application ID</label>
@@ -439,7 +439,6 @@ const SSOSettings = () => {
         )}
       </div>
 
-      {}
       <div className="sso-settings-footer">
         <button
           className="sso-sync-btn"
