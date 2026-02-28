@@ -16,7 +16,7 @@ async function main() {
       email: 'user@university.edu',
       name: 'Jan Kowalski',
       password: await bcrypt.hash('user123', 10),
-      role: 'USER'
+      role: 'KLIENT'
     }
   })
 
