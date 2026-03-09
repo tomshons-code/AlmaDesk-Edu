@@ -17,6 +17,10 @@ Thumbs.db
 coverage/
 .nyc_output/
 
+# Documents (engineering thesis)
+PRZYPADKI_TESTOWE.md
+docs/ROZDZIAL_4_TESTOWANIE.md
+
 # Tests & test reports
 app/backend/__tests__/
 app/backend/test-report/
