@@ -10,5 +10,16 @@ export default defineConfig({
         changeOrigin: true
       }
     }
-  }
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/__tests__/setup.js',
+    include: ['src/**/*.test.{js,jsx}'],
+    css: false,
+    reporters: ['default', 'json'],
+    outputFile: {
+      json: './test-report/results.json',
+    },
+  },
 })

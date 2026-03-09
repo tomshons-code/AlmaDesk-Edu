@@ -149,7 +149,7 @@ export default function SettingsPage() {
         {}
         <aside className="settings-sidebar">
           <h1 className="settings-main-title">
-            <Icon name="settings" size={28} />
+            <Icon name="sliders" size={28} />
             Ustawienia
           </h1>
 
@@ -165,7 +165,7 @@ export default function SettingsPage() {
               className={`settings-nav-item ${activeTab === 'appearance' ? 'active' : ''}`}
               onClick={() => setActiveTab('appearance')}
             >
-              <Icon name="settings" size={20} />
+              <Icon name="palette" size={20} />
               Wygląd
             </button>
             <button
@@ -360,7 +360,7 @@ export default function SettingsPage() {
           {activeTab === 'appearance' && (
             <div className="settings-section">
               <div className="settings-section-header">
-                <h2><Icon name="settings" size={24} /> Wygląd aplikacji</h2>
+                <h2><Icon name="palette" size={24} /> Wygląd aplikacji</h2>
                 <p>Dostosuj motywy kolorystyczne do swoich preferencji</p>
               </div>
 

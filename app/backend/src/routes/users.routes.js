@@ -295,7 +295,7 @@ router.get('/agent-ratings', verifyToken, async (req, res) => {
           select: {
             rating: true,
             ratingComment: true,
-            closedAt: true
+            updatedAt: true
           }
         })
 
@@ -314,12 +314,12 @@ router.get('/agent-ratings', verifyToken, async (req, res) => {
 
         const recentComments = ratedTickets
           .filter(t => t.ratingComment)
-          .sort((a, b) => new Date(b.closedAt) - new Date(a.closedAt))
+          .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
           .slice(0, 3)
           .map(t => ({
             rating: t.rating,
             comment: t.ratingComment,
-            date: t.closedAt
+            date: t.updatedAt
           }))
 
         return {

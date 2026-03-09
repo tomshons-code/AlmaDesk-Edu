@@ -64,6 +64,60 @@ router.get('/', verifyToken, async (req, res) => {
   }
 })
 
+router.get('/suggest', verifyToken, async (req, res) => {
+  if (!['AGENT', 'ADMIN', 'SUPER_ADMIN'].includes(req.user.role)) {
+    return res.status(403).json({ error: 'Access denied' })
+  }
+  try {
+    const { category, keywords, limit = 5 } = req.query
+    const maxResults = Math.min(parseInt(limit, 10) || 5, 10)
+
+    const templates = await prisma.responseTemplate.findMany({
+      where: {
+        OR: [{ isPublic: true }, { createdById: req.user.id }]
+      },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        category: true,
+        isPublic: true,
+        createdBy: { select: { id: true, name: true } }
+      }
+    })
+
+    const kwords = (keywords || '').toLowerCase().split(/[\s,+]+/).filter(k => k.length >= 2)
+    const cat    = (category || '').toUpperCase()
+
+    const scored = templates.map(t => {
+      let score = 0
+
+      if (cat && t.category === cat)   score += 3
+      if (cat && t.category === null)  score += 1
+
+      const searchable = `${t.title} ${t.content}`.toLowerCase()
+      let kwHits = 0
+      kwords.forEach(kw => {
+        if (searchable.includes(kw)) kwHits++
+      })
+      score += Math.min(kwHits, 4)
+
+      return { ...t, _score: score }
+    })
+
+    const results = scored
+      .filter(t => t._score > 0)
+      .sort((a, b) => b._score - a._score)
+      .slice(0, maxResults)
+      .map(({ _score, ...t }) => t)
+
+    res.json(results)
+  } catch (error) {
+    console.error('Error fetching template suggestions:', error)
+    res.status(500).json({ error: 'Failed to fetch template suggestions' })
+  }
+})
+
 router.get('/:id', verifyToken, async (req, res) => {
   try {
     const template = await prisma.responseTemplate.findUnique({
@@ -184,59 +238,5 @@ router.delete('/:id', verifyToken, agentOnly, async (req, res) => {
   }
 })
 
-
-router.get('/suggest', verifyToken, async (req, res) => {
-  if (!['AGENT', 'ADMIN', 'SUPER_ADMIN'].includes(req.user.role)) {
-    return res.status(403).json({ error: 'Access denied' })
-  }
-  try {
-    const { category, keywords, limit = 5 } = req.query
-    const maxResults = Math.min(parseInt(limit, 10) || 5, 10)
-
-    const templates = await prisma.responseTemplate.findMany({
-      where: {
-        OR: [{ isPublic: true }, { createdById: req.user.id }]
-      },
-      select: {
-        id: true,
-        title: true,
-        content: true,
-        category: true,
-        isPublic: true,
-        createdBy: { select: { id: true, name: true } }
-      }
-    })
-
-    const kwords = (keywords || '').toLowerCase().split(/[\s,+]+/).filter(k => k.length >= 2)
-    const cat    = (category || '').toUpperCase()
-
-    const scored = templates.map(t => {
-      let score = 0
-
-      if (cat && t.category === cat)   score += 3
-      if (cat && t.category === null)  score += 1
-
-      const searchable = `${t.title} ${t.content}`.toLowerCase()
-      let kwHits = 0
-      kwords.forEach(kw => {
-        if (searchable.includes(kw)) kwHits++
-      })
-      score += Math.min(kwHits, 4)
-
-      return { ...t, _score: score }
-    })
-
-    const results = scored
-      .filter(t => t._score > 0)
-      .sort((a, b) => b._score - a._score)
-      .slice(0, maxResults)
-      .map(({ _score, ...t }) => t)
-
-    res.json(results)
-  } catch (error) {
-    console.error('Error fetching template suggestions:', error)
-    res.status(500).json({ error: 'Failed to fetch template suggestions' })
-  }
-})
 
 module.exports = router

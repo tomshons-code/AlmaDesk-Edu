@@ -303,9 +303,9 @@
 | **Wymaganie** | F16 |
 | **Priorytet** | Średni |
 | **Warunki wstępne** | AGENT zalogowany; istnieje komentarz napisany przez niego |
-| **Kroki** | 1. Otwórz zgłoszenie z komentarzem. 2. Kliknij „Edytuj" przy swoim komentarzu. 3. Zmień treść i zapisz. |
-| **Oczekiwany rezultat** | Treść komentarza zaktualizowana. Flaga `isEdited` ustawiona na `true`. Pole `updatedAt` zmienione. Autor komentarza lub AGENT/SUPER_ADMIN mogą edytować — inni nie. |
-| **Pokrycie** | Edycja komentarzy, flaga isEdited, kontrola uprawnień |
+| **Kroki** | 1. Otwórz zgłoszenie z komentarzem. 2. Kliknij „Edytuj" przy swoim komentarzu. 3. Zmień treść i zapisz. 4. Zaloguj się jako inny AGENT — próba edycji powinna być odrzucona. 5. Zaloguj się jako ADMIN — próba edycji powinna być odrzucona (ADMIN nie ma uprawnienia edycji cudzych komentarzy). |
+| **Oczekiwany rezultat** | Treść komentarza zaktualizowana. Flaga `isEdited` ustawiona na `true`. Pole `updatedAt` zmienione. Uprawnieni do edycji: autor komentarza, AGENT przypisany do zgłoszenia oraz SUPER_ADMIN. Rola ADMIN sama w sobie nie daje prawa do edycji cudzych komentarzy (403). |
+| **Pokrycie** | Edycja komentarzy, flaga isEdited, kontrola uprawnień wg roli i przypisania |
 
 ---
 
@@ -517,12 +517,13 @@
 
 ---
 
-## TC-39 — Responsywność interfejsu (RWD)
+## TC-39 — Responsywność interfejsu (RWD) *(test manualny)*
 
 | Pole | Wartość |
 |------|---------|
 | **Wymaganie** | NF2 |
 | **Priorytet** | Wysoki |
+| **Typ testu** | Manualny — wymaga wizualnej weryfikacji w różnych rozdzielczościach |
 | **Warunki wstępne** | Aplikacja dostępna w przeglądarce |
 | **Kroki** | 1. Otwórz AlmaDesk-Edu w przeglądarce na komputerze (1920×1080). 2. Zmień rozmiar okna do tabletu (768px). 3. Zmień rozmiar do smartfona (375px). 4. Sprawdź kluczowe widoki: dashboard, lista zgłoszeń, szczegóły zgłoszenia, ustawienia, formularz tworzenia zgłoszenia. |
 | **Oczekiwany rezultat** | Na każdej rozdzielczości: nawigacja dostępna (sidebar zwijany lub hamburger menu), formularze czytelne, tabele z horyzontalnym scrollem, kafelki KPI układają się w kolumny. Brak obciętych treści. Pola „triple-column" (lokalizacja/wydział/laboratorium) przechodzą na układ 1-kolumnowy na mobile. |
@@ -595,12 +596,13 @@
 
 ---
 
-## TC-45 — Kompatybilność z przeglądarkami
+## TC-45 — Kompatybilność z przeglądarkami *(test manualny)*
 
 | Pole | Wartość |
 |------|---------|
 | **Wymaganie** | NF10 |
 | **Priorytet** | Średni |
+| **Typ testu** | Manualny — wymaga uruchomienia w fizycznych przeglądarkach |
 | **Warunki wstępne** | Aplikacja dostępna w sieci |
 | **Kroki** | 1. Otwórz AlmaDesk-Edu w: Chrome (latest), Firefox (latest), Edge (latest), Safari (latest). 2. Na każdej przeglądarce: zaloguj się, utwórz zgłoszenie, zmień motyw, przełącz filtr w kolejce, otwórz szczegóły zgłoszenia, dodaj komentarz. |
 | **Oczekiwany rezultat** | Aplikacja działa poprawnie we wszystkich 4 przeglądarkach. React 19 + Vite 7 generują kod kompatybilny z nowoczesnymi przeglądarkami. CSS `color-mix()` i zmienne CSS obsługiwane poprawnie. Brak białych ekranów, błędów renderowania ani uszkodzonych layoutów. |
@@ -608,12 +610,13 @@
 
 ---
 
-## TC-46 — Przyjazny interfejs — motywy kolorystyczne
+## TC-46 — Przyjazny interfejs — motywy kolorystyczne *(test manualny)*
 
 | Pole | Wartość |
 |------|---------|
 | **Wymaganie** | NF8 |
 | **Priorytet** | Niski |
+| **Typ testu** | Manualny — wymaga wizualnej oceny czytelności i kontrastu motywów |
 | **Warunki wstępne** | Użytkownik zalogowany |
 | **Kroki** | 1. Przejdź do Ustawienia → Wygląd. 2. Sprawdź dostępność motywów (ThemeSelector). 3. Wybierz ciemny motyw. 4. Sprawdź czytelność interfejsu. 5. Wybierz jasny motyw. |
 | **Oczekiwany rezultat** | System oferuje 10 motywów kolorystycznych. Zmiana motywu jest natychmiastowa (CSS variables). Motywy ciemne i jasne zachowują czytelność tekstu, kontrast i spójność kolorystyczną. Wybór motywu persystowany. |
@@ -654,9 +657,9 @@
 | **Wymaganie** | A2 (kontener danych), A2b (kontener logów) |
 | **Priorytet** | Średni |
 | **Warunki wstępne** | Oba kontenery PostgreSQL uruchomione (porty 5432 i 5433) |
-| **Kroki** | 1. Wykonaj akcję generującą wpis audytu (np. logowanie). 2. Sprawdź w głównej bazie (port 5432): tabele users, tickets, comments, attachments, etc. 3. Sprawdź w bazie logów (port 5433): dane audytowe. 4. Zweryfikuj, że obie bazy działają niezależnie. |
-| **Oczekiwany rezultat** | Główna baza (almadesk_db, port 5432): dane operacyjne (15+ tabel Prisma). Baza logów (almadesk_logs, port 5433): niezależna instancja PostgreSQL do logowania aktywności. Separacja zapewnia: logi nie wpływają na wydajność głównej bazy, niezależny backup, możliwość rotacji logów. |
-| **Pokrycie** | Dwa kontenery PostgreSQL, separacja danych i logów |
+| **Kroki** | 1. Wykonaj akcję generującą wpis audytu (np. logowanie). 2. Sprawdź w głównej bazie (port 5432): tabele users, tickets, comments, attachments, auditLogs, etc. 3. Sprawdź bazę logów (port 5433): niezależna instancja PostgreSQL przeznaczona do gromadzenia logów infrastrukturalnych. 4. Zweryfikuj, że obie instancje działają niezależnie i mają osobne wolumeny danych. |
+| **Oczekiwany rezultat** | Główna baza (almadesk_db, port 5432): dane operacyjne (15+ tabel Prisma) **w tym tabela AuditLog** — audyt aplikacyjny trafia do głównej bazy (Prisma schema). Baza logów (almadesk_logs_db, port 5433): oddzielna instancja PostgreSQL przygotowana pod logi infrastrukturalne i przyszłą separację audytu. Separacja zapewnia: niezależny backup, możliwość rotacji logów infrastrukturalnych, przygotowanie pod replikację. |
+| **Pokrycie** | Dwa kontenery PostgreSQL, separacja danych operacyjnych i logów infrastrukturalnych |
 
 ---
 

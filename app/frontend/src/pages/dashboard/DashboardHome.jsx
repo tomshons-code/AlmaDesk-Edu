@@ -252,41 +252,6 @@ export default function DashboardHome() {
     </div>
   )
 
-  async function handleAssignToMe(ticketId) {
-    try {
-      const res = await fetch(`/api/tickets/${ticketId}/assign`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('almadesk_token')}`
-        },
-        body: JSON.stringify({ assignTo: user?.login })
-      })
-
-      if (res.ok) {
-        loadDashboardData()
-      }
-    } catch (error) {
-      console.error('Error assigning ticket:', error)
-    }
-  }
-}
-
-function StatCard({ icon, label, value, color, trend, isTime, onClick }) {
-  return (
-    <div
-      className={`dashboard-stat-card ${onClick ? 'clickable' : ''}`}
-      style={{ borderLeft: `4px solid ${color}` }}
-      onClick={onClick}
-    >
-      <div className="stat-card-icon" style={{ color }}>{icon}</div>
-      <div className="stat-card-content">
-        <div className="stat-card-value">{value}</div>
-        <div className="stat-card-label">{label}</div>
-        {trend === 'urgent' && <span className="stat-card-trend urgent"><Icon name="alert" size={14} /> Wymaga uwagi</span>}
-      </div>
-    </div>
-  )
 }
 
 function QuickActionCard({ icon, title, description, onClick }) {

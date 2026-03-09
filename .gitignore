@@ -16,3 +16,10 @@ Thumbs.db
 *.iml
 coverage/
 .nyc_output/
+
+# Tests & test reports
+app/backend/__tests__/
+app/backend/test-report/
+app/frontend/e2e/
+app/frontend/test-report/
+app/frontend/test-results/

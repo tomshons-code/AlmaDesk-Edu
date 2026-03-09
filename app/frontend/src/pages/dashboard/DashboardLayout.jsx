@@ -124,7 +124,7 @@ export default function DashboardLayout() {
             className="dashboard-nav-item"
             onClick={() => navigate('/settings')}
           >
-            <span className="nav-icon"><Icon name="settings" size={18} /></span>
+            <span className="nav-icon"><Icon name="sliders" size={18} /></span>
             <span>Ustawienia</span>
           </button>
         </div>

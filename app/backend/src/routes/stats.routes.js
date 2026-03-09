@@ -11,7 +11,7 @@ router.get('/dashboard', verifyToken, async (req, res) => {
 
     let stats = {}
 
-    if (userRole === 'KLIENT' || userRole === 'USER') {
+    if (userRole === 'KLIENT') {
       const [total, open, inProgress, resolved, closed, byPriority, byCategoryData, recent] = await Promise.all([
         prisma.ticket.count({
           where: { createdById: userId }
